@@ -1,0 +1,1 @@
+rd_("BiA value that can be used to pad a string.BkErgonomic JavaScript-style string helpers .CmExtension trait adding JavaScript-style helpers to string \xe2\x80\xa6C`Returns an iterator over the padding characters.DkPads the start of the string with <code>pad</code> until it is at least \xe2\x80\xa6")
