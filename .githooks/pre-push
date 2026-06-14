@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Pre-push hook: run the same checks as CI so we never push a red build.
+# Enable with:  git config core.hooksPath .githooks
+set -euo pipefail
+
+echo "pre-push: cargo fmt --check"
+cargo fmt --all --check
+
+echo "pre-push: cargo clippy -D warnings"
+cargo clippy --all-targets -- -D warnings
+
+echo "pre-push: cargo test"
+cargo test
+
+echo "pre-push: all checks passed ✔"

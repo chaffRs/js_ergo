@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Pre-commit hook: fast lint/format gate before a commit lands.
+# (Full test suite runs in pre-push.)
+# Enable with:  git config core.hooksPath .githooks
+set -euo pipefail
+
+echo "pre-commit: cargo fmt --check"
+cargo fmt --all --check
+
+echo "pre-commit: cargo clippy -D warnings"
+cargo clippy --all-targets -- -D warnings
+
+echo "pre-commit: checks passed ✔"
