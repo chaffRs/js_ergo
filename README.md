@@ -20,10 +20,13 @@ Bring the [`JsStrExt`] trait into scope and call the helpers on any `&str`:
 ```rust
 use js_ergo::JsStrExt;
 
-// Pad with a single character.
+// Pad the start with a single character.
 assert_eq!("123".pad_start(5, '0'), "00123");
 
-// Pad with a repeating, truncated pattern (like JS `padStart`).
+// Pad the end, too.
+assert_eq!("123".pad_end(5, '0'), "12300");
+
+// A multi-character pad is repeated and truncated (like JS `padStart`).
 assert_eq!("5".pad_start(4, "ab"), "aba5");
 
 // Already long enough? Returned unchanged.

@@ -1,6 +1,6 @@
 //! Ergonomic JavaScript-style string helpers .
 #![warn(missing_docs)]
 
-mod pad_start;
+mod str_ext;
 
-pub use pad_start::{JsStrExt, PadWith};
+pub use str_ext::{JsStrExt, PadWith};

@@ -239,3 +239,143 @@ fn str_large_padding_gap_repeats_pattern() {
     assert!(result.ends_with('1'));
     assert!(result.starts_with("abab"));
 }
+
+// ===========================================================================
+// pad_end
+// ===========================================================================
+
+// ---------------------------------------------------------------------------
+// char pad — basic padding (appended after the string)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn pad_end_char_pads_short_string_with_zeros() {
+    assert_eq!("123".pad_end(5, '0'), "12300");
+}
+
+#[test]
+fn pad_end_char_pads_with_space() {
+    assert_eq!("hi".pad_end(5, ' '), "hi   ");
+}
+
+#[test]
+fn pad_end_char_pads_exactly_one_character() {
+    assert_eq!("abc".pad_end(4, '0'), "abc0");
+}
+
+#[test]
+fn pad_end_char_empty_string_pads_to_target_length() {
+    assert_eq!("".pad_end(5, 'x'), "xxxxx");
+}
+
+// ---------------------------------------------------------------------------
+// char pad — no-op cases
+// ---------------------------------------------------------------------------
+
+#[test]
+fn pad_end_char_no_padding_when_length_equals_string_length() {
+    assert_eq!("abc".pad_end(3, '0'), "abc");
+}
+
+#[test]
+fn pad_end_char_no_padding_when_length_less_than_string_length() {
+    assert_eq!("hello".pad_end(3, '0'), "hello");
+}
+
+#[test]
+fn pad_end_char_length_zero_returns_original_string() {
+    assert_eq!("hello".pad_end(0, '0'), "hello");
+}
+
+// ---------------------------------------------------------------------------
+// char pad — unicode (length counted in chars, not bytes)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn pad_end_char_unicode_string_gets_padded() {
+    assert_eq!("世".pad_end(4, '0'), "世000");
+}
+
+#[test]
+fn pad_end_char_emoji_string_gets_padded() {
+    assert_eq!("🦀".pad_end(3, '0'), "🦀00");
+}
+
+#[test]
+fn pad_end_char_unicode_pad_character() {
+    assert_eq!("hi".pad_end(4, '★'), "hi★★");
+}
+
+// ---------------------------------------------------------------------------
+// &str pad — multi-character pattern is repeated and truncated
+// ---------------------------------------------------------------------------
+
+#[test]
+fn pad_end_str_pattern_repeats_and_truncates_to_gap() {
+    // gap of 3 over pattern "ab" -> a, b, a
+    assert_eq!("5".pad_end(4, "ab"), "5aba");
+}
+
+#[test]
+fn pad_end_str_pattern_fills_evenly() {
+    assert_eq!("5".pad_end(5, "ab"), "5abab");
+}
+
+#[test]
+fn pad_end_str_pattern_longer_than_gap_is_cut_off() {
+    assert_eq!("X".pad_end(3, "abcdef"), "Xab");
+}
+
+#[test]
+fn pad_end_str_empty_string_padded_with_pattern() {
+    assert_eq!("".pad_end(4, "ab"), "abab");
+}
+
+// ---------------------------------------------------------------------------
+// &str pad — empty pad produces no padding (matches JS)
+// ---------------------------------------------------------------------------
+
+#[test]
+fn pad_end_str_empty_pad_does_not_pad() {
+    assert_eq!("hi".pad_end(10, ""), "hi");
+}
+
+// ---------------------------------------------------------------------------
+// owned / borrowed String pad
+// ---------------------------------------------------------------------------
+
+#[test]
+fn pad_end_ref_string_pad_repeats_and_truncates() {
+    let pad = String::from("ab");
+    assert_eq!("5".pad_end(4, &pad), "5aba");
+}
+
+#[test]
+fn pad_end_owned_string_pad_repeats_and_truncates() {
+    assert_eq!("5".pad_end(4, String::from("ab")), "5aba");
+}
+
+// ---------------------------------------------------------------------------
+// Length invariants & relationship to pad_start
+// ---------------------------------------------------------------------------
+
+#[test]
+fn pad_end_result_length_matches_target() {
+    assert_eq!("foo".pad_end(10, "ab").chars().count(), 10);
+    assert_eq!("世".pad_end(6, "★☆").chars().count(), 6);
+}
+
+#[test]
+fn pad_end_large_padding_gap() {
+    let result = "1".pad_end(100, '0');
+    assert_eq!(result.chars().count(), 100);
+    assert_eq!(result, format!("{:0<100}", "1"));
+}
+
+#[test]
+fn pad_end_is_reverse_of_pad_start() {
+    // Padding the reversed string at the end, then reversing, equals pad_start.
+    let reversed: String = "5".chars().rev().collect();
+    let padded_end: String = reversed.pad_end(4, '0').chars().rev().collect();
+    assert_eq!(padded_end, "5".pad_start(4, '0'));
+}

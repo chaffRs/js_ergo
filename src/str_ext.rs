@@ -95,6 +95,42 @@ pub trait JsStrExt {
     ///
     /// [`String.prototype.padStart`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart
     fn pad_start<P: PadWith>(&self, length: usize, pad: P) -> String;
+
+    /// Pads the end of the string with `pad` until it is at least `length`
+    /// [`char`]s long.
+    ///
+    /// `pad` may be a single [`char`] or a `&str`. A multi-character `&str` is
+    /// repeated and truncated to exactly fill the space appended after the
+    /// original string; for example, padding `"5"` to width 4 with `"ab"`
+    /// produces `"5aba"`.
+    ///
+    /// The string is returned unchanged when it is already at least `length`
+    /// [`char`]s long, or when `pad` is an empty `&str`.
+    ///
+    /// # Length is counted in `char`s
+    ///
+    /// `length` is a number of Unicode scalar values ([`char`]s). This differs
+    /// from JavaScript's [`String.prototype.padEnd`], which counts UTF-16 code
+    /// units: a character outside the Basic Multilingual Plane such as `'🦀'`
+    /// counts as 1 here but as 2 in JavaScript.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use js_ergo::JsStrExt;
+    ///
+    /// // Pad with a single character.
+    /// assert_eq!("123".pad_end(5, '0'), "12300");
+    ///
+    /// // Pad with a repeating, truncated pattern.
+    /// assert_eq!("5".pad_end(4, "ab"), "5aba");
+    ///
+    /// // Already long enough: returned unchanged.
+    /// assert_eq!("hello".pad_end(3, '.'), "hello");
+    /// ```
+    ///
+    /// [`String.prototype.padEnd`]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padEnd
+    fn pad_end<P: PadWith>(&self, length: usize, pad: P) -> String;
 }
 
 impl JsStrExt for str {
@@ -110,6 +146,21 @@ impl JsStrExt for str {
         let mut result = String::with_capacity(self.len() + gap);
         result.extend(pad.pad_chars().take(gap));
         result.push_str(self);
+        result
+    }
+
+    fn pad_end<P: PadWith>(&self, length: usize, pad: P) -> String {
+        let len = self.chars().count();
+
+        if len >= length {
+            return self.to_string();
+        }
+
+        let gap = length - len;
+
+        let mut result = String::with_capacity(self.len() + gap);
+        result.push_str(self);
+        result.extend(pad.pad_chars().take(gap));
         result
     }
 }
