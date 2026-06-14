@@ -1,1 +1,0 @@
-rd_("gjs_ergo")

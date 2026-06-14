@@ -1,6 +1,15 @@
 [package]
 name = "js_ergo"
-version = "0.0.1"
+version = "0.1.0"
 edition = "2024"
+rust-version = "1.85"
+description = "Ergonomic, JavaScript-style string helpers for Rust (padStart and friends)."
+license = "MIT"
+repository = "https://github.com/chaffRs/js_ergo"
+documentation = "https://docs.rs/js_ergo"
+readme = "README.md"
+keywords = ["string", "padding", "javascript", "ergonomics", "text"]
+categories = ["text-processing"]
+exclude = [".githooks", "workflows"]
 
 [dependencies]
