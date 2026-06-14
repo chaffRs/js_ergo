@@ -1,0 +1,41 @@
+name: Release
+
+# Publishes to crates.io when a version tag (e.g. v0.3.0) is pushed.
+#
+# Requires a repository secret named CRATES_IO_TOKEN:
+#   crates.io → Account Settings → API Tokens → New Token (publish scope)
+#   GitHub repo → Settings → Secrets and variables → Actions → New secret
+
+on:
+  push:
+    tags:
+      - "v*"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  publish:
+    name: Publish to crates.io
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Verify tag matches Cargo.toml version
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          CRATE="$(cargo metadata --no-deps --format-version 1 | jq -r '.packages[0].version')"
+          echo "tag=$TAG  crate=$CRATE"
+          if [ "$TAG" != "$CRATE" ]; then
+            echo "::error::Tag v$TAG does not match Cargo.toml version $CRATE"
+            exit 1
+          fi
+
+      - name: Test
+        run: cargo test
+
+      - name: Publish
+        run: cargo publish --token "${{ secrets.CRATES_IO_TOKEN }}"
