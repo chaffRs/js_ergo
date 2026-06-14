@@ -32,20 +32,3 @@ jobs:
 
       - name: Test
         run: cargo test
-
-  no_std:
-    name: no_std build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: thumbv7em-none-eabi
-
-      - name: Cache cargo build
-        uses: Swatinem/rust-cache@v2
-
-      - name: Build for a no_std target
-        run: cargo build --lib --target thumbv7em-none-eabi

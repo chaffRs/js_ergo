@@ -10,6 +10,6 @@ documentation = "https://docs.rs/js_ergo"
 readme = "README.md"
 keywords = ["string", "padding", "javascript", "ergonomics", "text"]
 categories = ["text-processing"]
-exclude = [".githooks", "workflows"]
+exclude = [".github", ".githooks", "TODO.md"]
 
 [dependencies]

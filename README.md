@@ -46,6 +46,18 @@ as `'🦀'` counts as 1 here but as 2 in JavaScript.
 
 Rust 1.85 (edition 2024).
 
+## Development
+
+CI (in `.github/workflows/`) runs `cargo fmt --check`, `clippy -D warnings`,
+and the test suite on every push and pull request.
+
+To run the same gates locally before each commit/push, enable the bundled git
+hooks once per clone:
+
+```bash
+git config core.hooksPath .githooks
+```
+
 ## License
 
 Licensed under the [MIT License](LICENSE).
